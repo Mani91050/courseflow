@@ -22,3 +22,6 @@ dist/
 *.pdf
 !samples/*.txt
 !samples/*.pdf
+
+# TypeScript build metadata
+*.tsbuildinfo
