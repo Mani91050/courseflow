@@ -122,3 +122,25 @@ Learning:
 - Embedded previews can restrict external navigation even when a link is valid.
 
 Result: **Passed**
+
+## Test 7 — Production deployment acceptance test
+
+**Frontend:** https://courseflow-seven.vercel.app/  
+**API:** https://courseflow-api.vercel.app/
+
+Observed in the deployed application:
+
+- The frontend loaded successfully.
+- The API health endpoint returned `healthy`.
+- Production CORS allowed the exact frontend origin.
+- Sample extraction produced the expected deadlines.
+- Review, editing, manual addition, conflict warnings, and accuracy details worked.
+- ICS export was tested in a normal deployed browser.
+
+Learning:
+
+- A Vercel monorepo can deploy the FastAPI API and Vite frontend as separate projects.
+- Environment variables connect the frontend to the API and restrict browser origins.
+- Deployment must be tested end to end; a healthy homepage alone does not prove that API calls or downloads work.
+
+Result: **Passed**

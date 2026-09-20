@@ -6,6 +6,14 @@ CourseFlow is a student planning application created for Beginner's Paradise —
 
 > Current milestone: text/PDF extraction, human review, conflict detection, and calendar export.
 
+## Live project
+
+- **Application:** https://courseflow-seven.vercel.app/
+- **API health:** https://courseflow-api.vercel.app/api/health
+- **Source:** https://github.com/Mani91050/courseflow
+
+The frontend and FastAPI backend are deployed as separate Vercel projects. Production CORS is restricted to the deployed CourseFlow frontend.
+
 ## Problem
 
 Important course dates are often buried inside long syllabi. Manually copying them is slow and error-prone, and ordinary calendars do not warn students when several deadlines collide.
