@@ -136,6 +136,36 @@ Current measured result:
 
 See [docs/accuracy-report.md](docs/accuracy-report.md) for scope, per-fixture results, limitations, and reproduction commands. This is a small hackathon benchmark, not a claim of universal syllabus accuracy.
 
+## Deployment
+
+CourseFlow can be deployed as two Vercel projects from this repository.
+
+### API project
+
+- Project root: repository root
+- Framework preset: Other
+- Serverless entry point: `api/index.py`
+- Configuration: `vercel.json`
+- Environment variable after the frontend is deployed:
+
+```env
+ALLOWED_ORIGINS=https://your-courseflow-frontend.vercel.app
+```
+
+### Frontend project
+
+- Project root: `frontend`
+- Framework preset: Vite
+- Build command: `npm run build`
+- Output directory: `dist`
+- Environment variable:
+
+```env
+VITE_API_URL=https://your-courseflow-api.vercel.app
+```
+
+After deployment, verify `/api/health`, text parsing, PDF parsing, conflict recalculation, and ICS download in an incognito browser.
+
 ## Known limitations
 
 - The MVP accepts text-based PDFs; scanned-image OCR is not included yet.
