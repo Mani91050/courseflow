@@ -39,6 +39,7 @@ function App() {
   const [error, setError] = useState('')
   const [editing, setEditing] = useState<Deadline | null>(null)
   const [addingNew, setAddingNew] = useState(false)
+  const [showAccuracy, setShowAccuracy] = useState(false)
   const approved = events.filter(event => event.approved)
   const reviewed = events.length > 0
   const workload = useMemo(() => approved.reduce((sum, event) => sum + event.effort_hours, 0), [approved])
@@ -198,7 +199,7 @@ function App() {
         </section>
 
         <section className="trust-section">
-          <div className="trust-copy"><div className="trust-icon"><ShieldCheck/></div><span className="section-kicker">MEASURED, NOT MARKETED</span><h2>Extraction you can inspect.</h2><p>CourseFlow publishes a reproducible nine-fixture benchmark—and shows the source sentence for every result because automated extraction is never perfect.</p><a href="https://github.com/Mani91050/courseflow/blob/main/docs/accuracy-report.md" target="_blank" rel="noreferrer">Read the accuracy report →</a></div>
+          <div className="trust-copy"><div className="trust-icon"><ShieldCheck/></div><span className="section-kicker">MEASURED, NOT MARKETED</span><h2>Extraction you can inspect.</h2><p>CourseFlow publishes a reproducible nine-fixture benchmark—and shows the source sentence for every result because automated extraction is never perfect.</p><button className="report-button" onClick={() => setShowAccuracy(true)}>View benchmark details →</button></div>
           <div className="benchmark-card"><div className="benchmark-heading"><BarChart3/><span>Date extraction benchmark</span></div><div className="benchmark-metrics"><div><strong>12/12</strong><span>expected dates found</span></div><div><strong>92.3%</strong><span>date precision</span></div><div><strong>100%</strong><span>date recall</span></div><div><strong>1</strong><span>documented false positive</span></div></div><small>Small transparent fixture set · results reproducible from the public repository</small></div>
         </section>
 
@@ -207,6 +208,16 @@ function App() {
           <button className="export-button" disabled={!approved.length} onClick={downloadCalendar}><Download/>Download .ICS calendar</button>
         </section>
       </>}
+
+      {showAccuracy && <div className="modal-backdrop" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) setShowAccuracy(false) }}>
+        <div className="modal accuracy-modal" role="dialog" aria-modal="true" aria-labelledby="accuracy-title">
+          <div className="modal-heading"><div><span className="section-kicker">TRANSPARENT BENCHMARK</span><h2 id="accuracy-title">What the numbers mean</h2></div><button className="close-button" onClick={() => setShowAccuracy(false)} aria-label="Close"><X/></button></div>
+          <div className="accuracy-summary"><div><strong>9</strong><span>test fixtures</span></div><div><strong>12/12</strong><span>expected dates found</span></div><div><strong>1</strong><span>false positive</span></div></div>
+          <div className="accuracy-explanation"><h3>Precision · 92.3%</h3><p>Of all dates CourseFlow extracted, 92.3% were expected deadlines in this small test set.</p><h3>Recall · 100%</h3><p>CourseFlow found all 12 expected dated deadlines in the benchmark.</p><h3>Known limitation</h3><p>The sentence “The previous exam was held May 12, 2025” is extracted even though it describes history. This is why CourseFlow shows source text and requires review before export.</p></div>
+          <div className="accuracy-formats"><b>Formats tested</b><span>Full month</span><span>Abbreviated</span><span>Ordinal</span><span>Numeric</span><span>ISO</span><span>Missing year</span></div>
+          <a className="github-report-link" href="https://github.com/Mani91050/courseflow/blob/main/docs/accuracy-report.md" target="_blank" rel="noreferrer">Open full report on GitHub ↗</a>
+        </div>
+      </div>}
 
       {editing && <div className="modal-backdrop" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) closeEditor() }}>
         <div className="modal" role="dialog" aria-modal="true" aria-labelledby="editor-title">
