@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { AlertTriangle, CalendarDays, Check, Clock, Download, FileText, GraduationCap, Loader2, Pencil, Plus, Sparkles, Upload, X } from 'lucide-react'
+import { AlertTriangle, BarChart3, CalendarDays, Check, Clock, Download, FileText, GraduationCap, Loader2, Pencil, Plus, ShieldCheck, Sparkles, Upload, X } from 'lucide-react'
 import './styles.css'
 
 type EventType = 'assignment' | 'exam' | 'project' | 'presentation' | 'other'
@@ -195,6 +195,11 @@ function App() {
             {conflicts.map((conflict, index) => <article className={`conflict ${conflict.severity}`} key={`${conflict.title}-${index}`}><AlertTriangle/><div><span>{conflict.severity} priority</span><h3>{conflict.title}</h3><p>{conflict.description}</p></div></article>)}
             {!conflicts.length && <article className="all-clear"><Check/><div><h3>No conflicts detected</h3><p>Your approved deadlines are reasonably distributed.</p></div></article>}
           </div>
+        </section>
+
+        <section className="trust-section">
+          <div className="trust-copy"><div className="trust-icon"><ShieldCheck/></div><span className="section-kicker">MEASURED, NOT MARKETED</span><h2>Extraction you can inspect.</h2><p>CourseFlow publishes a reproducible nine-fixture benchmark—and shows the source sentence for every result because automated extraction is never perfect.</p><a href="https://github.com/Mani91050/courseflow/blob/main/docs/accuracy-report.md" target="_blank" rel="noreferrer">Read the accuracy report →</a></div>
+          <div className="benchmark-card"><div className="benchmark-heading"><BarChart3/><span>Date extraction benchmark</span></div><div className="benchmark-metrics"><div><strong>12/12</strong><span>expected dates found</span></div><div><strong>92.3%</strong><span>date precision</span></div><div><strong>100%</strong><span>date recall</span></div><div><strong>1</strong><span>documented false positive</span></div></div><small>Small transparent fixture set · results reproducible from the public repository</small></div>
         </section>
 
         <section className="export-section">
