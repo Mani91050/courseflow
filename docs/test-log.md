@@ -84,3 +84,23 @@ Learning:
 - Editing and manual additions use the same conflict-analysis workflow.
 
 Result: **Passed**
+
+## Test 5 — Semester settings and date boundaries
+
+The participant tested a 2027 semester running from September 1 through December 20.
+
+Observed:
+
+- Semester settings were visible and understandable.
+- A deadline without a year was interpreted using the selected academic year, 2027.
+- A January 2028 deadline triggered an outside-semester warning.
+- An end date earlier than the start date produced a clear validation message.
+- Invalid semester settings blocked syllabus processing.
+
+Learning:
+
+- Academic context must be configurable rather than hard-coded.
+- Boundary warnings can catch incorrect years without silently deleting an event.
+- Validation should happen in both the interface and API.
+
+Result: **Passed**
