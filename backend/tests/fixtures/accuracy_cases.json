@@ -1,0 +1,56 @@
+[
+  {
+    "name": "full month names",
+    "default_year": 2026,
+    "text": "CS 101\nAssignment due September 21, 2026\nMidterm Exam October 3, 2026\nFinal project due December 8, 2026",
+    "expected_dates": ["2026-09-21", "2026-10-03", "2026-12-08"]
+  },
+  {
+    "name": "abbreviations and ordinal suffixes",
+    "default_year": 2026,
+    "text": "DES 210\nSketchbook due Sep 23rd, 2026\nPresentation Nov 2nd, 2026",
+    "expected_dates": ["2026-09-23", "2026-11-02"]
+  },
+  {
+    "name": "numeric dates",
+    "default_year": 2026,
+    "text": "MATH 200\nQuiz on 09/24/2026\nProblem set due 10-05-2026",
+    "expected_dates": ["2026-09-24", "2026-10-05"]
+  },
+  {
+    "name": "ISO dates",
+    "default_year": 2026,
+    "text": "DATA 110\nLab due 2026-09-28\nFinal report due 2026-11-19",
+    "expected_dates": ["2026-09-28", "2026-11-19"]
+  },
+  {
+    "name": "missing years",
+    "default_year": 2027,
+    "text": "WEB 301\nAssignment due September 14\nDemo on October 7",
+    "expected_dates": ["2027-09-14", "2027-10-07"]
+  },
+  {
+    "name": "duplicate line removal",
+    "default_year": 2026,
+    "text": "BIO 120\nLab report due September 30, 2026\nLab report due September 30, 2026",
+    "expected_dates": ["2026-09-30"]
+  },
+  {
+    "name": "no dated deadlines",
+    "default_year": 2026,
+    "text": "ENG 101\nRead chapter five before class.\nPrepare discussion questions.",
+    "expected_dates": []
+  },
+  {
+    "name": "unsupported relative dates",
+    "default_year": 2026,
+    "text": "ART 105\nReflection due next Friday.\nPortfolio due the week after midterms.",
+    "expected_dates": []
+  },
+  {
+    "name": "historical date false positive",
+    "default_year": 2026,
+    "text": "HIST 205\nThe previous exam was held May 12, 2025.\nNo new exam date has been announced.",
+    "expected_dates": []
+  }
+]
