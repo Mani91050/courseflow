@@ -43,6 +43,45 @@ def test_rejected_events_are_not_analyzed():
     assert detect_conflicts(events) == []
 
 
+def test_missing_year_uses_selected_academic_year():
+    events = extract_deadlines("Assignment due September 23", default_year=2027)
+    assert len(events) == 1
+    assert events[0].due_date == date(2027, 9, 23)
+
+
+def test_flags_deadlines_outside_semester_boundaries():
+    events = [
+        Deadline(title="Inside", due_date=date(2026, 10, 1), confidence=1),
+        Deadline(title="Too early", due_date=date(2026, 8, 20), confidence=1),
+        Deadline(title="Too late", due_date=date(2027, 1, 10), confidence=1),
+    ]
+    conflicts = detect_conflicts(
+        events,
+        semester_start=date(2026, 9, 1),
+        semester_end=date(2026, 12, 20),
+    )
+    outside_ids = {
+        event_id
+        for conflict in conflicts
+        if conflict.title == "Deadline outside semester"
+        for event_id in conflict.event_ids
+    }
+    assert events[0].id not in outside_ids
+    assert events[1].id in outside_ids
+    assert events[2].id in outside_ids
+
+
+def test_rejects_invalid_semester_range():
+    payload = {
+        "events": [],
+        "semester_start": "2026-12-20",
+        "semester_end": "2026-09-01",
+    }
+    response = client.post("/api/analyze", json=payload)
+    assert response.status_code == 400
+    assert "end date" in response.json()["detail"]
+
+
 def test_ics_contains_only_approved_events():
     payload = {
         "events": [
