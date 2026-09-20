@@ -66,6 +66,8 @@ class ParseResponse(BaseModel):
 
 class AnalyzeRequest(BaseModel):
     events: list[Deadline]
+    semester_start: date | None = None
+    semester_end: date | None = None
 
 
 DATE_PATTERNS = [
@@ -160,7 +162,14 @@ def extract_deadlines(text: str, default_year: int | None = None) -> list[Deadli
     return sorted(events, key=lambda event: event.due_date)
 
 
-def detect_conflicts(events: list[Deadline]) -> list[Conflict]:
+def detect_conflicts(
+    events: list[Deadline],
+    semester_start: date | None = None,
+    semester_end: date | None = None,
+) -> list[Conflict]:
+    if semester_start and semester_end and semester_end < semester_start:
+        raise ValueError("Semester end date must be on or after its start date.")
+
     approved = sorted((event for event in events if event.approved), key=lambda event: event.due_date)
     conflicts: list[Conflict] = []
 
@@ -193,6 +202,22 @@ def detect_conflicts(events: list[Deadline]) -> list[Conflict]:
                 )
 
     for event in approved:
+        outside_semester = (
+            (semester_start is not None and event.due_date < semester_start)
+            or (semester_end is not None and event.due_date > semester_end)
+        )
+        if outside_semester:
+            conflicts.append(
+                Conflict(
+                    severity="medium",
+                    title="Deadline outside semester",
+                    description=(
+                        f"“{event.title}” is due on {event.due_date.strftime('%b %d, %Y')}, "
+                        "outside the selected semester. Check the date before exporting."
+                    ),
+                    event_ids=[event.id],
+                )
+            )
         if event.confidence < 0.8:
             conflicts.append(
                 Conflict(
@@ -222,8 +247,13 @@ def health() -> dict[str, str]:
 async def parse_syllabus(
     text: str = Form(default=""),
     default_year: int | None = Form(default=None),
+    semester_start: date | None = Form(default=None),
+    semester_end: date | None = Form(default=None),
     file: UploadFile | None = File(default=None),
 ) -> ParseResponse:
+    if semester_start and semester_end and semester_end < semester_start:
+        raise HTTPException(status_code=400, detail="Semester end date must be on or after its start date.")
+
     source = text.strip()
     if file:
         if file.content_type != "application/pdf" and not file.filename.lower().endswith(".pdf"):
@@ -236,12 +266,20 @@ async def parse_syllabus(
         raise HTTPException(status_code=400, detail="Paste syllabus text or upload a PDF.")
 
     events = extract_deadlines(source, default_year)
-    return ParseResponse(events=events, conflicts=detect_conflicts(events), source_characters=len(source))
+    return ParseResponse(
+        events=events,
+        conflicts=detect_conflicts(events, semester_start, semester_end),
+        source_characters=len(source),
+    )
 
 
 @app.post("/api/analyze")
 def analyze(request: AnalyzeRequest) -> dict[str, list[Conflict]]:
-    return {"conflicts": detect_conflicts(request.events)}
+    try:
+        conflicts = detect_conflicts(request.events, request.semester_start, request.semester_end)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"conflicts": conflicts}
 
 
 def escape_ics(value: str) -> str:

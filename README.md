@@ -35,6 +35,8 @@ Students managing several courses, especially students who receive deadlines in 
 - Same-day conflict detection
 - Heavy seven-day workload detection
 - Suggested preparation start dates
+- Configurable academic year and semester boundaries
+- Warnings for deadlines outside the selected semester
 - `.ics` calendar export
 - Responsive interface
 - Backend unit tests
@@ -124,7 +126,8 @@ Do not add a trailing slash.
 
 - The MVP accepts text-based PDFs; scanned-image OCR is not included yet.
 - Date extraction is deterministic and supports common formats, not every possible phrase.
-- Missing years use the selected/default year and must be reviewed.
+- Missing years use the selected academic year and must be reviewed.
+- Semester boundaries flag suspicious dates but do not automatically reject them.
 - Effort estimates are initial defaults that the student should edit.
 - CourseFlow does not write directly to a user's private calendar; it exports a portable `.ics` file.
 - Data is processed for the current request and is not persisted by the backend.

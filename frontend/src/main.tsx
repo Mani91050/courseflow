@@ -30,6 +30,9 @@ Final report due October 5, 2026`
 function App() {
   const [text, setText] = useState('')
   const [file, setFile] = useState<File | null>(null)
+  const [academicYear, setAcademicYear] = useState(2026)
+  const [semesterStart, setSemesterStart] = useState('2026-09-01')
+  const [semesterEnd, setSemesterEnd] = useState('2026-12-20')
   const [events, setEvents] = useState<Deadline[]>([])
   const [conflicts, setConflicts] = useState<Conflict[]>([])
   const [loading, setLoading] = useState(false)
@@ -45,8 +48,11 @@ function App() {
     setLoading(true)
     try {
       const form = new FormData()
+      if (semesterEnd < semesterStart) throw new Error('Semester end date must be after the start date.')
       form.set('text', text)
-      form.set('default_year', '2026')
+      form.set('default_year', String(academicYear))
+      form.set('semester_start', semesterStart)
+      form.set('semester_end', semesterEnd)
       if (file) form.set('file', file)
       const response = await fetch(`${API}/api/parse`, { method: 'POST', body: form })
       const data = await response.json()
@@ -62,7 +68,8 @@ function App() {
   async function reanalyze(next: Deadline[]) {
     setEvents(next)
     const response = await fetch(`${API}/api/analyze`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ events: next })
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ events: next, semester_start: semesterStart, semester_end: semesterEnd })
     })
     if (response.ok) setConflicts((await response.json()).conflicts)
   }
@@ -74,7 +81,7 @@ function App() {
   function openNewDeadline() {
     setAddingNew(true)
     setEditing({
-      id: crypto.randomUUID(), title: '', course: 'Course', due_date: '2026-09-30',
+      id: crypto.randomUUID(), title: '', course: 'Course', due_date: semesterStart,
       event_type: 'assignment', effort_hours: 5, source_text: 'Added manually by student',
       confidence: 1, approved: true, suggested_start: null,
     })
@@ -128,6 +135,15 @@ function App() {
         <div className="input-grid">
           <div className="panel input-panel">
             <div className="panel-heading"><div><span className="section-kicker">01 · IMPORT</span><h2>Add your syllabus</h2></div><FileText/></div>
+            <div className="semester-settings">
+              <div className="settings-title"><div><span>Semester settings</span><small>Used for missing years and boundary warnings</small></div>{reviewed && <button onClick={() => void reanalyze(events)}>Update warnings</button>}</div>
+              <div className="settings-grid">
+                <label><span>Academic year</span><select value={academicYear} onChange={event => setAcademicYear(Number(event.target.value))}>{[2025, 2026, 2027, 2028].map(year => <option key={year} value={year}>{year}</option>)}</select></label>
+                <label><span>Starts</span><input type="date" value={semesterStart} onChange={event => setSemesterStart(event.target.value)}/></label>
+                <label><span>Ends</span><input type="date" value={semesterEnd} onChange={event => setSemesterEnd(event.target.value)}/></label>
+              </div>
+              {semesterEnd < semesterStart && <div className="settings-error"><AlertTriangle size={14}/>End date must be after the start date.</div>}
+            </div>
             <label htmlFor="syllabus-text">Paste syllabus text</label>
             <textarea id="syllabus-text" value={text} onChange={event => setText(event.target.value)} placeholder="Paste assignment, exam, and project dates here…" />
             <div className="or"><span>or upload</span></div>
