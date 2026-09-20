@@ -122,6 +122,20 @@ VITE_API_URL=https://your-backend.example.com
 
 Do not add a trailing slash.
 
+## Measured extraction benchmark
+
+CourseFlow includes a transparent nine-fixture date-extraction benchmark covering supported date formats, missing years, duplicates, irrelevant text, relative dates, and historical context.
+
+Current measured result:
+
+- 12/12 expected dates found
+- 0 expected dates missed
+- 1 documented historical-date false positive
+- 92.3% date precision
+- 100% date recall on this small fixture set
+
+See [docs/accuracy-report.md](docs/accuracy-report.md) for scope, per-fixture results, limitations, and reproduction commands. This is a small hackathon benchmark, not a claim of universal syllabus accuracy.
+
 ## Known limitations
 
 - The MVP accepts text-based PDFs; scanned-image OCR is not included yet.
