@@ -104,3 +104,21 @@ Learning:
 - Validation should happen in both the interface and API.
 
 Result: **Passed**
+
+## Test 6 — In-app accuracy and trust details
+
+The initial external GitHub report link did not open inside the embedded preview, revealing an environment-specific usability issue. The interface was changed to show benchmark details in an in-app modal while keeping the full report available for normal browsers.
+
+Observed:
+
+- The benchmark-details popup opened successfully.
+- Precision and recall explanations were visible.
+- The documented historical-date limitation was visible.
+- The close button worked successfully.
+
+Learning:
+
+- Important judging evidence should remain understandable inside the product instead of depending only on an external link.
+- Embedded previews can restrict external navigation even when a link is valid.
+
+Result: **Passed**
